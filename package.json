@@ -1,0 +1,11 @@
+{
+  "name": "solana-protocol-tree",
+  "version": "1.0.0",
+  "description": "Solana Deep Ecosystem Composability Scanner & Sub-Protocol Dependency Tree",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {}
+}

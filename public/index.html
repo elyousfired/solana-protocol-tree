@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solana Protocol Tree — Deep Composability & Sub-Protocol Radar</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070c14; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .glow-solana { box-shadow: 0 0 25px -5px rgba(20, 241, 149, 0.25); }
+    .glow-purple { box-shadow: 0 0 25px -5px rgba(153, 69, 255, 0.25); }
+  </style>
+</head>
+<body class="bg-[#050911] text-slate-100 min-h-screen antialiased flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-[#080d1a]/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#9945FF] to-[#14F195] p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <div class="w-full h-full bg-[#080d1a] rounded-[10px] flex items-center justify-center font-bold text-lg text-emerald-300">
+            🌲
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-black tracking-tight text-white flex items-center gap-1.5">
+              <span>Solana Protocol Tree</span>
+            </h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              DEEP COMPOSABILITY
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">On-Chain Sub-Protocol Dependency &amp; Cross-Program Invocation (CPI) Radar</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800 font-mono text-xs overflow-x-auto">
+        <button id="tab-tree" onclick="switchView('tree')" class="px-3.5 py-1.5 rounded-lg font-bold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm flex items-center gap-1.5">
+          <span>🌲</span>
+          <span>1. Composability Tree</span>
+        </button>
+        <button id="tab-directory" onclick="switchView('directory')" class="px-3.5 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+          <span>📋</span>
+          <span>2. Full Directory (450+)</span>
+        </button>
+        <button id="tab-scanner" onclick="switchView('scanner')" class="px-3.5 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+          <span>🔍</span>
+          <span>3. Live CPI Scanner</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 space-y-6 w-full">
+
+    <!-- Top 4 Hero KPI Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-mono">
+      <div class="bg-[#0b1322] border border-emerald-500/30 rounded-2xl p-4 shadow-lg shadow-emerald-950/20">
+        <div class="text-[11px] text-slate-400 uppercase font-semibold">Total Indexed Protocols</div>
+        <div id="kpi-total-protocols" class="text-2xl font-black text-white mt-1">451 Live</div>
+        <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+          <span>●</span>
+          <span>Full DefiLlama + On-Chain Registry</span>
+        </div>
+      </div>
+
+      <div class="bg-[#0b1322] border border-purple-500/30 rounded-2xl p-4 shadow-lg shadow-purple-950/20">
+        <div class="text-[11px] text-slate-400 uppercase font-semibold">Ecosystem Root Primitives</div>
+        <div id="kpi-root-count" class="text-2xl font-black text-purple-300 mt-1">8 Core Anchors</div>
+        <div class="text-[11px] text-slate-400 mt-1">ORE, Raydium, Sanctum, Kamino...</div>
+      </div>
+
+      <div class="bg-[#0b1322] border border-cyan-500/30 rounded-2xl p-4 shadow-lg shadow-cyan-950/20">
+        <div class="text-[11px] text-slate-400 uppercase font-semibold">Sub-Protocols &amp; Integrators</div>
+        <div id="kpi-sub-count" class="text-2xl font-black text-cyan-300 mt-1">50+ Tracked</div>
+        <div class="text-[11px] text-cyan-400 mt-1">Mining Pools, LSTs, Looping Vaults</div>
+      </div>
+
+      <div class="bg-[#0b1322] border border-amber-500/30 rounded-2xl p-4 shadow-lg shadow-amber-950/20">
+        <div class="text-[11px] text-slate-400 uppercase font-semibold">Total Ecosystem TVL</div>
+        <div id="kpi-total-tvl" class="text-2xl font-black text-amber-300 mt-1">$9.45 Billion</div>
+        <div class="text-[11px] text-slate-400 mt-1">Capital Secured on Solana L1</div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 1: COMPOSABILITY TREE (ROOT PRIMITIVES & DEPENDENT APPS)  -->
+    <!-- ============================================================== -->
+    <section id="view-tree" class="space-y-6">
+      
+      <!-- Primitive Selector Bar -->
+      <div class="bg-[#080e1c] border border-slate-800 rounded-2xl p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+              <span>🧬</span>
+              <span>Select Root Anchor Primitive to Expand Its Dependency Tree:</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Explore who is building on top of, mining, integrating with, or routing through each base protocol.</p>
+          </div>
+          <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+            Active Focus: <span id="active-primitive-name" class="font-bold">ORE Protocol</span>
+          </span>
+        </div>
+
+        <div id="primitive-pills" class="flex flex-wrap gap-2 pt-1 font-mono text-xs">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Tree Visualization Canvas -->
+      <div class="bg-[#080d1a] border border-slate-800/90 rounded-3xl p-5 sm:p-7 space-y-8 relative overflow-hidden">
+        
+        <!-- Root Primitive Giant Card -->
+        <div id="root-card-container" class="relative z-10">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Section Connector Badge -->
+        <div class="flex items-center justify-center relative">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-dashed border-slate-800"></div></div>
+          <div class="relative px-4 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-emerald-400 shadow-lg flex items-center gap-2">
+            <span>⬇️</span>
+            <span>Sub-Protocols, Mining Pools, Liquid Bins &amp; Dependent Apps Invoking This Primitive:</span>
+            <span>⬇️</span>
+          </div>
+        </div>
+
+        <!-- Sub-Protocols Grid -->
+        <div id="sub-protocols-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Injected via JS -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 2: MASTER PROTOCOL DIRECTORY (450+ PROTOCOLS)             -->
+    <!-- ============================================================== -->
+    <section id="view-directory" class="hidden space-y-5">
+      <div class="bg-[#080d1a] border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-white font-mono flex items-center gap-2">
+              <span>📋 Solana Master Protocol Directory</span>
+              <span id="dir-count-badge" class="px-2.5 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">451 Protocols</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Complete catalog of verified protocols, AMMs, money markets, and primitives operating on Solana.</p>
+          </div>
+
+          <!-- Search Filter -->
+          <div class="relative w-full md:w-72">
+            <input 
+              id="dir-search-input"
+              type="text" 
+              oninput="handleDirectorySearch(this.value)" 
+              placeholder="Search protocol, symbol (ORE, JTO, RAY)..." 
+              class="w-full bg-slate-950/90 border border-slate-800 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 outline-none font-mono"
+            />
+          </div>
+        </div>
+
+        <!-- Category Pills Filter -->
+        <div id="dir-category-pills" class="flex flex-wrap gap-1.5 font-mono text-xs">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Directory Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-800/80 bg-slate-950/60">
+          <table class="w-full text-left border-collapse font-mono text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 bg-slate-900/80 text-[11px] text-slate-400 uppercase">
+                <th class="py-3 px-3 text-center w-12">#</th>
+                <th class="py-3 px-4">Protocol Name</th>
+                <th class="py-3 px-4">Symbol</th>
+                <th class="py-3 px-4">Category</th>
+                <th class="py-3 px-4 text-right">On-Chain TVL</th>
+                <th class="py-3 px-4 text-center">Primitive Type</th>
+                <th class="py-3 px-4 text-center">Sub-Protocols</th>
+                <th class="py-3 px-4 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="directory-tbody" class="divide-y divide-slate-800/60">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 3: LIVE ON-CHAIN PROGRAM SCANNER (SOLANA RPC CALLS)       -->
+    <!-- ============================================================== -->
+    <section id="view-scanner" class="hidden space-y-5">
+      <div class="bg-[#080d1a] border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-6">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-mono font-bold uppercase text-emerald-400">Direct Solana RPC Explorer</span>
+          </div>
+          <h2 class="text-xl font-bold text-white mt-1">Live On-Chain Program CPI Inspector</h2>
+          <p class="text-xs text-slate-400 mt-1 max-w-2xl">
+            Inspect real-time blockchain signatures and caller contracts for any Solana Program ID. Track real transactions as they interact with ORE, Raydium, or custom contracts.
+          </p>
+        </div>
+
+        <!-- Input Bar with Quick Presets -->
+        <div class="space-y-2">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <input 
+              id="scanner-input" 
+              type="text" 
+              value="oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp"
+              placeholder="Enter Solana Program ID (e.g. oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp)..." 
+              class="flex-1 bg-slate-950 border border-slate-800 focus:border-emerald-400 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 outline-none font-mono"
+            />
+            <button 
+              onclick="triggerLiveScan()" 
+              id="btn-scan" 
+              class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold font-mono text-xs transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5"
+            >
+              <span id="scan-btn-icon">⚡</span>
+              <span>Scan On-Chain</span>
+            </button>
+          </div>
+
+          <!-- Quick Preset Buttons -->
+          <div class="flex flex-wrap items-center gap-2 text-xs font-mono pt-1">
+            <span class="text-slate-500">Quick Anchors:</span>
+            <button onclick="setScannerPreset('oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp')" class="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800">ORE Token &amp; Mining</button>
+            <button onclick="setScannerPreset('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8')" class="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-800">Raydium AMM</button>
+            <button onclick="setScannerPreset('5ocnV1qiCgaQR8Jb8xWnVbApfayotuugQBNa3YWH388B')" class="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-purple-400 border border-slate-800">Sanctum Router</button>
+            <button onclick="setScannerPreset('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P')" class="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-pink-400 border border-slate-800">Pump.fun</button>
+            <button onclick="setScannerPreset('KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD')" class="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800">Kamino Lend</button>
+          </div>
+        </div>
+
+        <!-- Scanner Results Panel -->
+        <div id="scanner-result-panel" class="space-y-4">
+          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/70 font-mono text-xs space-y-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+              <div>
+                <span class="text-slate-500">Program Label:</span>
+                <span id="scan-label" class="font-bold text-white text-sm ml-1">ORE v2 Protocol (Mining Engine)</span>
+              </div>
+              <div class="text-[11px] text-slate-400">
+                <span>Recent Transactions Analyzed:</span>
+                <span id="scan-count" class="font-bold text-emerald-400 ml-1">15 Tx</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-[11px]">
+              <div>
+                <span class="text-slate-500">Program ID:</span>
+                <span id="scan-program-id" class="text-emerald-300 font-mono select-all ml-1 break-all">oreV2ZymfFTXgxcWizeN6uFzrhK4Y93X82JbJ4s5gWJ</span>
+              </div>
+              <div>
+                <span class="text-slate-500">Latest Confirmed Slot:</span>
+                <span id="scan-slot" class="text-cyan-300 ml-1">Loading...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Transactions Table -->
+          <div class="overflow-x-auto rounded-xl border border-slate-800/80 bg-slate-950/60 font-mono text-xs">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 bg-slate-900/80 text-[11px] text-slate-400 uppercase">
+                  <th class="py-2.5 px-3">Transaction Signature</th>
+                  <th class="py-2.5 px-3">Slot Height</th>
+                  <th class="py-2.5 px-3">Timestamp</th>
+                  <th class="py-2.5 px-3 text-center">Status</th>
+                  <th class="py-2.5 px-3 text-right">Solscan Link</th>
+                </tr>
+              </thead>
+              <tbody id="scan-tx-tbody" class="divide-y divide-slate-800/60">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-[#080d1a] py-6 font-mono text-xs text-slate-500 text-center">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>Solana Deep Composability &amp; Protocol Dependency Tree Engine</div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <span>Verified On-Chain Data</span>
+        <span>Anchor Program Registry</span>
+        <span>DefiLlama Core</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Script -->
+  <script>
+    let ecosystemData = null;
+    let activePrimitiveId = 'ore';
+    let directorySearch = '';
+    let directoryCategory = 'all';
+
+    async function initApp() {
+      try {
+        const res = await fetch('/api/solana/tree');
+        const json = await res.json();
+        if (json.success) {
+          ecosystemData = json;
+          renderHeaderStats();
+          renderPrimitivePills();
+          renderActivePrimitiveTree();
+          renderDirectory();
+          triggerLiveScan();
+        }
+      } catch (err) {
+        console.error('Failed to load ecosystem tree:', err);
+      }
+    }
+
+    function switchView(view) {
+      ['tree', 'directory', 'scanner'].forEach(v => {
+        const btn = document.getElementById(`tab-${v}`);
+        const sec = document.getElementById(`view-${v}`);
+        if (sec) {
+          if (v === view) sec.classList.remove('hidden');
+          else sec.classList.add('hidden');
+        }
+        if (btn) {
+          btn.className = v === view
+            ? 'px-3.5 py-1.5 rounded-lg font-bold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm flex items-center gap-1.5'
+            : 'px-3.5 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white flex items-center gap-1.5';
+        }
+      });
+    }
+
+    function renderHeaderStats() {
+      if (!ecosystemData) return;
+      const s = ecosystemData.summary;
+      document.getElementById('kpi-total-protocols').textContent = `${s.totalProtocols} Live`;
+      document.getElementById('kpi-root-count').textContent = `${s.rootPrimitivesCount} Core Anchors`;
+      document.getElementById('kpi-sub-count').textContent = `${s.subProtocolsCount} Tracked`;
+      document.getElementById('kpi-total-tvl').textContent = formatUSD(s.totalTvlUsd);
+    }
+
+    function renderPrimitivePills() {
+      const container = document.getElementById('primitive-pills');
+      if (!container || !ecosystemData) return;
+
+      container.innerHTML = ecosystemData.rootPrimitives.map(p => {
+        const isSel = p.id === activePrimitiveId;
+        return `
+          <button 
+            onclick="selectPrimitive('${p.id}')"
+            class="px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 font-bold ${
+              isSel 
+                ? 'bg-emerald-500/25 text-emerald-300 border-emerald-400/60 shadow-md shadow-emerald-500/20' 
+                : 'bg-slate-900/90 text-slate-300 border-slate-800 hover:border-slate-700'
+            }"
+          >
+            <span>${p.categoryIcon}</span>
+            <span>${p.name}</span>
+            <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-black/40 text-slate-400 font-normal">
+              ${p.subProtocolsCount}
+            </span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectPrimitive(id) {
+      activePrimitiveId = id;
+      renderPrimitivePills();
+      renderActivePrimitiveTree();
+    }
+
+    function renderActivePrimitiveTree() {
+      if (!ecosystemData) return;
+      const p = ecosystemData.rootPrimitives.find(x => x.id === activePrimitiveId);
+      if (!p) return;
+
+      document.getElementById('active-primitive-name').textContent = p.name;
+
+      // 1. Root Card
+      const rootContainer = document.getElementById('root-card-container');
+      rootContainer.innerHTML = `
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-[#0e1c31] via-[#091424] to-[#070d17] border border-emerald-500/40 shadow-xl shadow-emerald-950/20">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 flex-wrap font-mono text-xs">
+                <span class="px-2.5 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                  <span>${p.categoryIcon}</span>
+                  <span>ROOT ANCHOR PRIMITIVE</span>
+                </span>
+                <span class="px-2 py-0.5 rounded text-slate-300 bg-slate-900 border border-slate-800">${p.category}</span>
+                <span class="px-2 py-0.5 rounded text-purple-300 bg-purple-950/60 border border-purple-500/30">Symbol: $${p.symbol}</span>
+              </div>
+              <h3 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                <span>${p.name}</span>
+              </h3>
+              <p class="text-slate-300 text-xs sm:text-sm max-w-3xl leading-relaxed">${p.description}</p>
+              
+              <div class="pt-2 font-mono text-xs flex flex-wrap items-center gap-3 text-slate-400">
+                <div>
+                  <span class="text-slate-500">Program ID:</span>
+                  <span class="text-emerald-400 font-bold select-all ml-1">${p.programId}</span>
+                </div>
+                ${p.creator ? `<div><span class="text-slate-500">Architect:</span> <span class="text-slate-300">${p.creator}</span></div>` : ''}
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2 font-mono text-xs shrink-0">
+              <button onclick="inspectProgramFromTree('${p.programId}')" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold transition-all shadow-md flex items-center justify-center gap-1.5">
+                <span>⚡</span>
+                <span>Inspect On-Chain Calls</span>
+              </button>
+              <a href="https://solscan.io/account/${p.programId}" target="_blank" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-center transition-all">
+                View on Solscan ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Stats Strip -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-800 font-mono text-xs">
+            ${Object.entries(p.stats || {}).map(([k, v]) => `
+              <div class="bg-black/30 p-2.5 rounded-xl border border-slate-800/80">
+                <div class="text-[10px] text-slate-500 uppercase">${k}</div>
+                <div class="text-sm font-bold text-emerald-300 mt-0.5">${v}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // 2. Sub-Protocols Grid
+      const subGrid = document.getElementById('sub-protocols-grid');
+      const subs = p.subProtocols || [];
+      if (subs.length === 0) {
+        subGrid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 font-mono">No sub-protocols registered yet for this primitive.</div>`;
+        return;
+      }
+
+      subGrid.innerHTML = subs.map((s, idx) => `
+        <div class="bg-[#0b1322] border border-slate-800 hover:border-emerald-500/40 rounded-2xl p-4 space-y-3 transition-all hover:shadow-lg hover:shadow-emerald-950/20 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded-md font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                ${s.relation}
+              </span>
+              <span class="px-2 py-0.5 rounded-md font-semibold ${s.status === 'Active' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-slate-800 text-slate-400'}">
+                ${s.status}
+              </span>
+            </div>
+            
+            <h4 class="text-base font-bold text-white flex items-center gap-1.5">
+              <span>${s.name}</span>
+            </h4>
+            
+            <p class="text-xs text-slate-400 leading-relaxed">${s.description}</p>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800/80 space-y-2 font-mono text-[11px]">
+            ${s.token ? `<div class="flex justify-between"><span class="text-slate-500">Asset / Pair:</span><span class="text-slate-200 font-bold">${s.token}</span></div>` : ''}
+            ${s.tvl ? `<div class="flex justify-between"><span class="text-slate-500">Liquidity TVL:</span><span class="text-emerald-400 font-bold">${s.tvl}</span></div>` : ''}
+            ${s.volume24h ? `<div class="flex justify-between"><span class="text-slate-500">24H Flow:</span><span class="text-cyan-400 font-bold">${s.volume24h}</span></div>` : ''}
+            ${s.programId ? `
+              <div class="truncate text-[10px] text-slate-500">
+                <span>Contract:</span> <span class="text-slate-400 select-all">${s.programId.slice(0, 10)}...${s.programId.slice(-6)}</span>
+              </div>
+            ` : ''}
+
+            <div class="pt-1 flex items-center gap-2">
+              ${s.programId ? `
+                <button onclick="inspectProgramFromTree('${s.programId}')" class="flex-1 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-center font-bold text-xs transition-colors">
+                  Inspect CPI Calls ⚡
+                </button>
+              ` : `
+                <span class="text-slate-600 text-xs italic">Native App Integration</span>
+              `}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function inspectProgramFromTree(progId) {
+      switchView('scanner');
+      setScannerPreset(progId);
+    }
+
+    // Directory View
+    function renderDirectory() {
+      if (!ecosystemData) return;
+      const categories = ['all', ...ecosystemData.categories.map(c => c.name)];
+      const catContainer = document.getElementById('dir-category-pills');
+      
+      catContainer.innerHTML = categories.slice(0, 14).map(c => {
+        const isSel = directoryCategory === c;
+        const count = c === 'all' ? ecosystemData.protocols.length : (ecosystemData.categories.find(x => x.name === c)?.count || 0);
+        return `
+          <button 
+            onclick="setDirectoryCategory('${c}')"
+            class="px-2.5 py-1 rounded-lg border transition-all ${
+              isSel 
+                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 font-bold' 
+                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+            }"
+          >
+            <span>${c === 'all' ? 'All Sectors' : c}</span>
+            <span class="text-[10px] opacity-75">(${count})</span>
+          </button>
+        `;
+      }).join('');
+
+      filterAndRenderDirectory();
+    }
+
+    function setDirectoryCategory(cat) {
+      directoryCategory = cat;
+      renderDirectory();
+    }
+
+    function handleDirectorySearch(val) {
+      directorySearch = (val || '').toLowerCase().trim();
+      filterAndRenderDirectory();
+    }
+
+    function filterAndRenderDirectory() {
+      if (!ecosystemData) return;
+      let list = [...ecosystemData.protocols];
+
+      if (directoryCategory !== 'all') {
+        list = list.filter(p => p.category === directoryCategory);
+      }
+      if (directorySearch) {
+        list = list.filter(p => 
+          p.name.toLowerCase().includes(directorySearch) ||
+          (p.symbol && p.symbol.toLowerCase().includes(directorySearch)) ||
+          (p.category && p.category.toLowerCase().includes(directorySearch))
+        );
+      }
+
+      document.getElementById('dir-count-badge').textContent = `${list.length} Protocols`;
+      const tbody = document.getElementById('directory-tbody');
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-12 text-center text-slate-500">No protocols matching query.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map((p, idx) => `
+        <tr class="hover:bg-slate-900/60 transition-colors">
+          <td class="py-3 px-3 text-center text-slate-500">${idx + 1}</td>
+          <td class="py-3 px-4 font-bold text-white flex items-center gap-2">
+            <span>${p.categoryIcon || '🧩'}</span>
+            <span>${p.name}</span>
+          </td>
+          <td class="py-3 px-4 text-emerald-400 font-bold">${p.symbol ? `$${p.symbol}` : '<span class="text-slate-600">—</span>'}</td>
+          <td class="py-3 px-4 text-slate-300">${p.category}</td>
+          <td class="py-3 px-4 text-right font-bold ${p.tvl > 0 ? 'text-cyan-300' : 'text-slate-600'}">${formatUSD(p.tvl)}</td>
+          <td class="py-3 px-4 text-center">
+            ${p.isRootPrimitive ? `<span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-bold">Root Anchor</span>` : `<span class="text-slate-500 text-[10px]">App Layer</span>`}
+          </td>
+          <td class="py-3 px-4 text-center">
+            ${p.subProtocolsCount > 0 ? `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">${p.subProtocolsCount} Sub-Apps</span>` : '<span class="text-slate-600">0</span>'}
+          </td>
+          <td class="py-3 px-4 text-center">
+            ${p.isRootPrimitive ? `
+              <button onclick="openFromDirectory('${p.id}')" class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 font-bold text-[11px]">
+                View Tree 🌲
+              </button>
+            ` : (p.website ? `
+              <a href="${p.website}" target="_blank" class="text-slate-400 hover:text-white text-[11px]">Web ↗</a>
+            ` : '—')}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openFromDirectory(id) {
+      switchView('tree');
+      selectPrimitive(id);
+    }
+
+    // Scanner View
+    function setScannerPreset(progId) {
+      document.getElementById('scanner-input').value = progId;
+      triggerLiveScan();
+    }
+
+    async function triggerLiveScan() {
+      const input = document.getElementById('scanner-input');
+      const btnIcon = document.getElementById('scan-btn-icon');
+      const progId = (input.value || '').trim();
+      if (!progId) return;
+
+      if (btnIcon) btnIcon.textContent = '⏳';
+      try {
+        const res = await fetch(`/api/solana/scan?programId=${encodeURIComponent(progId)}&limit=15`);
+        const json = await res.json();
+        if (json.success) {
+          document.getElementById('scan-label').textContent = json.knownLabel;
+          document.getElementById('scan-count').textContent = `${json.signaturesAnalyzed} Verified Transactions`;
+          document.getElementById('scan-program-id').textContent = json.programId;
+          document.getElementById('scan-slot').textContent = json.latestSlot ? `#${json.latestSlot.toLocaleString()}` : 'N/A';
+
+          const tbody = document.getElementById('scan-tx-tbody');
+          if (json.recentTransactions && json.recentTransactions.length > 0) {
+            tbody.innerHTML = json.recentTransactions.map(tx => `
+              <tr class="hover:bg-slate-900/60 transition-colors">
+                <td class="py-2.5 px-3 font-mono text-[11px] text-emerald-300 select-all break-all">
+                  ${tx.signature.slice(0, 16)}...${tx.signature.slice(-16)}
+                </td>
+                <td class="py-2.5 px-3 font-mono text-[11px] text-cyan-300">#${tx.slot}</td>
+                <td class="py-2.5 px-3 text-slate-400 text-[11px]">
+                  ${tx.blockTime ? new Date(tx.blockTime).toLocaleTimeString() : 'Recent'}
+                </td>
+                <td class="py-2.5 px-3 text-center">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${tx.err === 'Success' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">
+                    ${tx.err}
+                  </span>
+                </td>
+                <td class="py-2.5 px-3 text-right">
+                  <a href="https://solscan.io/tx/${tx.signature}" target="_blank" class="text-cyan-400 hover:underline">
+                    Solscan ↗
+                  </a>
+                </td>
+              </tr>
+            `).join('');
+          } else {
+            tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500 font-mono">No recent transactions found on current RPC for this contract.</td></tr>`;
+          }
+        }
+      } catch (err) {
+        console.error('Scan failed:', err);
+      } finally {
+        if (btnIcon) btnIcon.textContent = '⚡';
+      }
+    }
+
+    function formatUSD(num) {
+      if (!num || num <= 0) return '$0';
+      if (num >= 1e9) return '$' + (num / 1e9).toFixed(2) + 'B';
+      if (num >= 1e6) return '$' + (num / 1e6).toFixed(2) + 'M';
+      if (num >= 1e3) return '$' + (num / 1e3).toFixed(1) + 'K';
+      return '$' + Number(num).toFixed(2);
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
