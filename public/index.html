@@ -293,6 +293,9 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
     <!-- ============================================================== -->
     <!-- VIEW 4: STRATIFIED PROTOCOL LAYERS (L0, L1, L2, L3, L4)        -->
     <!-- ============================================================== -->
@@ -456,6 +459,12 @@
     let layerSearch = '';
 
     async function initApp() {
+      // Check initial URL hash (e.g. #layers)
+      const initialHash = (window.location.hash || '').replace('#', '');
+      if (['tree', 'directory', 'scanner', 'layers'].includes(initialHash)) {
+        switchView(initialHash);
+      }
+
       try {
         const res = await fetch('/api/solana/tree');
         const json = await res.json();
@@ -474,6 +483,12 @@
     }
 
     function switchView(view) {
+      try {
+        if (window.location.hash !== `#${view}`) {
+          window.location.hash = view;
+        }
+      } catch {}
+
       ['tree', 'directory', 'scanner', 'layers'].forEach(v => {
         const btn = document.getElementById(`tab-${v}`);
         const sec = document.getElementById(`view-${v}`);
@@ -800,7 +815,19 @@
     // LAYERS ARCHITECTURE (L0, L1, L2, L3, L4) VIEW FUNCTIONS
     // ==============================================================
     function renderLayersView() {
-      if (!ecosystemData || !ecosystemData.layers) return;
+      if (!ecosystemData || !ecosystemData.layers) {
+        const solContainer = document.getElementById('layers-solana-container');
+        if (solContainer) {
+          solContainer.innerHTML = `
+            <div class="p-12 text-center text-slate-400 font-mono space-y-3">
+              <div class="text-3xl animate-pulse">⏳</div>
+              <div class="text-sm font-bold text-white">Loading Protocol Layers Architecture...</div>
+              <div class="text-xs text-slate-500">Fetching verified Solana and multi-chain registry...</div>
+            </div>
+          `;
+        }
+        return;
+      }
 
       // Update top tier counts in the visual pyramid
       const layers = ecosystemData.layers;
