@@ -444,6 +444,130 @@ export const ROOT_PRIMITIVES_TREES = [
   }
 ];
 
+// Curated Solana SVM Layer-2 Rollups & Scaling Networks
+export const CURATED_SOLANA_L2_PROTOCOLS = [
+  {
+    id: 'sonic-svm',
+    name: 'Sonic SVM',
+    symbol: 'SONIC',
+    category: 'SVM Rollup & Gaming L2',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'Sonic11111111111111111111111111111111111111',
+    tvl: 68500000,
+    website: 'https://sonic.game',
+    twitter: 'SonicSVM',
+    description: 'First atomic SVM Layer-2 rollup enabling sovereign Web3 games on Solana with custom fee markets.',
+    subProtocolsCount: 12,
+    subProtocols: []
+  },
+  {
+    id: 'soon-svm',
+    name: 'SOON SVM',
+    symbol: 'SOON',
+    category: 'SVM Rollup Stack',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'SOON111111111111111111111111111111111111111',
+    tvl: 45000000,
+    website: 'https://soo.network',
+    twitter: 'soon_svm',
+    description: 'Modular rollup stack delivering high-performance SVM execution to Ethereum, Bitcoin, and Cosmos ecosystems.',
+    subProtocolsCount: 6,
+    subProtocols: []
+  },
+  {
+    id: 'magicblock',
+    name: 'MagicBlock Ephemeral Rollups',
+    symbol: 'MBLK',
+    category: 'Ephemeral Rollup L2',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'Magic111111111111111111111111111111111111111',
+    tvl: 18000000,
+    website: 'https://magicblock.gg',
+    twitter: 'magicblock',
+    description: 'On-demand micro-rollups executing high-frequency state updates off-chain and settling back to Solana L1.',
+    subProtocolsCount: 8,
+    subProtocols: []
+  },
+  {
+    id: 'light-protocol',
+    name: 'Light Protocol (ZK Compression)',
+    symbol: 'LIGHT',
+    category: 'ZK Compression & Scaling',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'cmtDvXumGCrqC1Age74AVPhYWVXJMd8PJSawuhK6oED',
+    tvl: 32000000,
+    website: 'https://lightprotocol.com',
+    twitter: 'LightProtocol',
+    description: 'ZK state compression primitive scaling Solana ledger capacity by 1000x with privacy-preserving compressed accounts.',
+    subProtocolsCount: 15,
+    subProtocols: []
+  },
+  {
+    id: 'grass-network',
+    name: 'Grass Network (L2 Data Rollup)',
+    symbol: 'GRASS',
+    category: 'Data Rollup & DePIN L2',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'Grass111111111111111111111111111111111111111',
+    tvl: 85000000,
+    website: 'https://getgrass.io',
+    twitter: 'getgrass_io',
+    description: 'Decentralized data rollup processing web scraping validation proofs onto Solana via zero-knowledge settlement.',
+    subProtocolsCount: 4,
+    subProtocols: []
+  },
+  {
+    id: 'eclipse-svm',
+    name: 'Eclipse SVM',
+    symbol: 'ECLIPSE',
+    category: 'SVM Rollup',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'Eclps111111111111111111111111111111111111111',
+    tvl: 110000000,
+    website: 'https://eclipse.builders',
+    twitter: 'EclipseFND',
+    description: 'Ethereum L2 powered by the Solana Virtual Machine (SVM) utilizing Celestia for modular data availability.',
+    subProtocolsCount: 9,
+    subProtocols: []
+  },
+  {
+    id: 'rome-protocol',
+    name: 'Rome Protocol',
+    symbol: 'ROME',
+    category: 'Shared Sequencer & SVM L2',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'Rome111111111111111111111111111111111111111',
+    tvl: 15000000,
+    website: 'https://romeprotocol.xyz',
+    twitter: 'RomeProtocol',
+    description: 'Shared sequencer using Solana as the consensus layer for cross-rollup atomic composability.',
+    subProtocolsCount: 3,
+    subProtocols: []
+  },
+  {
+    id: 'termina-svm',
+    name: 'Termina SVM',
+    symbol: 'TERM',
+    category: 'SVM App-Rollup Network',
+    categoryIcon: '⚡',
+    isRootPrimitive: false,
+    programId: 'Term111111111111111111111111111111111111111',
+    tvl: 12000000,
+    website: 'https://termina.technology',
+    twitter: 'termina_tech',
+    description: 'Platform allowing developers to deploy sovereign SVM rollups and appchains with dedicated blockspace.',
+    subProtocolsCount: 5,
+    subProtocols: []
+  }
+];
+
 // Fetch all 451+ Solana Protocols from DefiLlama and merge with our deep Dependency Tree
 export async function getSolanaCompleteEcosystem(forceRefresh = false) {
   const cacheFile = path.join(CACHE_DIR, 'solana_deep_ecosystem.json');
@@ -490,6 +614,18 @@ export async function getSolanaCompleteEcosystem(forceRefresh = false) {
       subProtocolsCount: (root.subProtocols || []).length,
       subProtocols: root.subProtocols || []
     });
+  }
+
+  // 1.5 Add curated Solana SVM Layer-2 and execution rollups
+  for (const l2 of CURATED_SOLANA_L2_PROTOCOLS) {
+    if (!processedSlugs.has(l2.id)) {
+      processedSlugs.add(l2.id);
+      masterList.push({
+        ...l2,
+        defillamaSlug: l2.id,
+        defillamaId: null
+      });
+    }
   }
 
   // 2. Add all DefiLlama protocols
@@ -542,6 +678,86 @@ export async function getSolanaCompleteEcosystem(forceRefresh = false) {
     categoriesMap[c].totalTvl += (p.tvl || 0);
   }
 
+  // Group protocols by Architecture Layer (L0, L1, L2, L3, L4)
+  const layersMap = {
+    L0: {
+      code: 'L0',
+      title: 'Layer 0: Interoperability, Oracles & Infrastructure',
+      subtitle: 'Cross-chain bridges, decentralized oracles, and DePIN physical networks.',
+      icon: '🌐',
+      color: 'blue',
+      badgeClass: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+      count: 0,
+      totalTvl: 0,
+      protocols: []
+    },
+    L1: {
+      code: 'L1',
+      title: 'Layer 1: Base Consensus, Staking & Native Primitives',
+      subtitle: 'Solana base consensus, validator engines, native staking, and native PoW commodities (ORE).',
+      icon: '💎',
+      color: 'emerald',
+      badgeClass: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+      count: 0,
+      totalTvl: 0,
+      protocols: []
+    },
+    L2: {
+      code: 'L2',
+      title: 'Layer 2: SVM Rollups & Execution Scaling',
+      subtitle: 'Secondary execution networks, gaming SVM rollups, and ephemeral state channels settling to Solana.',
+      icon: '⚡',
+      color: 'purple',
+      badgeClass: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+      count: 0,
+      totalTvl: 0,
+      protocols: []
+    },
+    L3: {
+      code: 'L3',
+      title: 'Layer 3: Core DeFi & Liquidity Primitives',
+      subtitle: 'Automated market makers (AMMs), decentralized lending, orderbooks, and liquidity engines.',
+      icon: '🏦',
+      color: 'amber',
+      badgeClass: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+      count: 0,
+      totalTvl: 0,
+      protocols: []
+    },
+    L4: {
+      code: 'L4',
+      title: 'Layer 4: Aggregators, Launchpads & Consumer Apps',
+      subtitle: 'Routing aggregators, token launchpads, Telegram trading bots, and end-user applications.',
+      icon: '🚀',
+      color: 'pink',
+      badgeClass: 'bg-pink-500/20 text-pink-400 border-pink-500/30',
+      count: 0,
+      totalTvl: 0,
+      protocols: []
+    }
+  };
+
+  for (const p of masterList) {
+    p.layer = assignProtocolLayer(p);
+    const lCode = p.layer.code;
+    if (layersMap[lCode]) {
+      layersMap[lCode].count++;
+      layersMap[lCode].totalTvl += (p.tvl || 0);
+      layersMap[lCode].protocols.push({
+        id: p.id,
+        name: p.name,
+        symbol: p.symbol,
+        category: p.category,
+        categoryIcon: p.categoryIcon,
+        tvl: p.tvl,
+        website: p.website,
+        description: p.description,
+        isRootPrimitive: p.isRootPrimitive,
+        layerReason: p.layer.reason
+      });
+    }
+  }
+
   const result = {
     success: true,
     timestamp: Date.now(),
@@ -555,6 +771,8 @@ export async function getSolanaCompleteEcosystem(forceRefresh = false) {
       totalTvlUsd: totalTvl
     },
     categories: Object.values(categoriesMap).sort((a, b) => b.count - a.count),
+    layers: layersMap,
+    globalLayers: GLOBAL_LAYERS_REGISTRY,
     rootPrimitives: ROOT_PRIMITIVES_TREES,
     protocols: masterList
   };
@@ -565,6 +783,157 @@ export async function getSolanaCompleteEcosystem(forceRefresh = false) {
 
   return result;
 }
+
+export function assignProtocolLayer(protocol) {
+  const name = (protocol.name || '').toLowerCase();
+  const cat = (protocol.category || '').toLowerCase();
+  const desc = (protocol.description || '').toLowerCase();
+  const id = (protocol.id || '').toLowerCase();
+
+  // L0: Bridges, Cross-Chain, Oracles, DePIN, Infrastructure
+  if (
+    cat.includes('bridge') || cat.includes('cross chain') || cat.includes('oracle') ||
+    cat.includes('depin') || cat.includes('infrastructure') ||
+    name.includes('wormhole') || name.includes('pyth') || name.includes('debridge') ||
+    name.includes('switchboard') || name.includes('allbridge') || name.includes('helium') ||
+    name.includes('render') || name.includes('hivemapper') || name.includes('layerzero') ||
+    name.includes('mayan') || name.includes('teleport') || name.includes('axelar') ||
+    name.includes('chainlink')
+  ) {
+    return {
+      code: 'L0',
+      title: 'Layer 0: Interoperability, Oracles & Infrastructure',
+      badge: 'L0 Infra & Cross-Chain',
+      color: 'blue',
+      reason: 'Underlying data availability, oracle feeds, hardware networks (DePIN), or cross-chain bridge messaging.'
+    };
+  }
+
+  // L2: SVM Rollups, Off-chain execution, Ephemeral Rollups, Scaling
+  if (
+    cat.includes('rollup') || cat.includes('l2') || cat.includes('scaling') ||
+    name.includes('sonic') || name.includes('soon') || name.includes('magicblock') ||
+    name.includes('eclipse') || name.includes('light protocol') || name.includes('ephemeral') ||
+    name.includes('rome') || name.includes('termina') ||
+    desc.includes('rollup') || desc.includes('svm l2') || desc.includes('layer 2')
+  ) {
+    return {
+      code: 'L2',
+      title: 'Layer 2: SVM Rollups & Execution Scaling',
+      badge: 'L2 SVM Scaling',
+      color: 'purple',
+      reason: 'Secondary execution environment, horizontal scaling, or ephemeral rollup settling onto Solana.'
+    };
+  }
+
+  // L1: Base Consensus, Validator infrastructure, Native Staking & Digital Commodities
+  if (
+    cat.includes('liquid staking') || cat.includes('staking') || cat.includes('mining') || cat.includes('pow') ||
+    name.includes('solana') || name.includes('ore') || name.includes('jito') || name.includes('marinade') ||
+    name.includes('blazestake') || name.includes('solblaze') || name.includes('coal') || name.includes('miner') ||
+    desc.includes('proof-of-work') || desc.includes('validator') || desc.includes('mev')
+  ) {
+    return {
+      code: 'L1',
+      title: 'Layer 1: Base Consensus, Staking & Native Primitives',
+      badge: 'L1 Base & PoW Commodity',
+      color: 'emerald',
+      reason: 'Solana base consensus, validator engines, native staking, and native digital commodities like ORE.'
+    };
+  }
+
+  // L4: Aggregators, Launchpads, Telegram Bots, Consumer Apps, NFTs, Social
+  if (
+    cat.includes('launchpad') || cat.includes('telegram bot') || cat.includes('bot') ||
+    cat.includes('nft') || cat.includes('gaming') || cat.includes('social') ||
+    cat.includes('indexes') || cat.includes('luck') || cat.includes('prediction') ||
+    name.includes('jupiter') || name.includes('pump.fun') || name.includes('sanctum') ||
+    name.includes('trojan') || name.includes('bonkbot') || name.includes('photon') ||
+    name.includes('bullx') || name.includes('tensor') || name.includes('magic eden') ||
+    desc.includes('aggregator') || desc.includes('launchpad') || desc.includes('trading bot')
+  ) {
+    return {
+      code: 'L4',
+      title: 'Layer 4: Aggregators, Consumer Apps & Bots',
+      badge: 'L4 Apps & Aggregators',
+      color: 'pink',
+      reason: 'End-user client applications, routing aggregators, launchpads, and high-frequency trading bots.'
+    };
+  }
+
+  // L3: Core DeFi & Liquidity Primitives (DEX, AMM, Lending, Perps, Yield)
+  return {
+    code: 'L3',
+    title: 'Layer 3: Core DeFi & Liquidity Primitives',
+    badge: 'L3 Liquidity & Money Market',
+    color: 'amber',
+    reason: 'Smart contract liquidity pools, automated market makers, lending money markets, and perpetuals.'
+  };
+}
+
+export const GLOBAL_LAYERS_REGISTRY = [
+  {
+    layer: 'L0',
+    title: 'Layer 0: Interoperability, Consensus Frameworks & Shared Infrastructure',
+    description: 'The foundational substrate enabling multiple independent blockchains to communicate, bridge assets, share security, or verify data.',
+    color: 'blue',
+    protocols: [
+      { name: 'Cosmos (Tendermint/IBC)', category: 'Interoperability Hub', symbol: 'ATOM', role: 'Inter-Blockchain Communication protocol connecting sovereign Appchains.' },
+      { name: 'Polkadot', category: 'Shared Security Substrate', symbol: 'DOT', role: 'Relay chain providing pooled security and cross-consensus messaging (XCM).' },
+      { name: 'LayerZero', category: 'Omnichain Messaging', symbol: 'ZRO', role: 'Cross-chain communication primitive for arbitrary message passing.' },
+      { name: 'Wormhole', category: 'Cross-Chain Relayer', symbol: 'W', role: 'Generic messaging protocol bridging Solana, Ethereum, and 30+ chains.' },
+      { name: 'Celestia', category: 'Modular Data Availability', symbol: 'TIA', role: 'Pluggable DA layer ordered for rollups and sovereign L2/L3 execution.' },
+      { name: 'Pyth Network', category: 'High-Fidelity Oracle Substrate', symbol: 'PYTH', role: 'First-party sub-second financial market oracle broadcasting to 50+ chains.' },
+      { name: 'Chainlink (CCIP)', category: 'Cross-Chain Interoperability', symbol: 'LINK', role: 'Cross-chain protocol for tokens and arbitrary data transfer.' },
+      { name: 'EigenLayer', category: 'Restaking Substrate', symbol: 'EIGEN', role: 'Shared cryptoeconomic security layer powering Actively Validated Services (AVSs).' }
+    ]
+  },
+  {
+    layer: 'L1',
+    title: 'Layer 1: Sovereign Base Consensus & Settlement Blockchains',
+    description: 'Sovereign monolithic or modular blockchains responsible for consensus, direct state execution, and native settlement.',
+    color: 'emerald',
+    protocols: [
+      { name: 'Solana', category: 'High-Performance Monolithic L1', symbol: 'SOL', role: 'Proof-of-History (PoH) single-state high throughput execution engine (65k TPS).' },
+      { name: 'Ethereum', category: 'Decentralized Settlement L1', symbol: 'ETH', role: 'Global state machine and primary settlement foundation for rollup ecosystems.' },
+      { name: 'Bitcoin', category: 'Proof-of-Work Monetary L1', symbol: 'BTC', role: 'Decentralized digital commodity and secure immutable monetary ledger.' },
+      { name: 'Sui Network', category: 'Object-Centric Move L1', symbol: 'SUI', role: 'Parallel execution blockchain using object-centric data model and Narwhal/Bullshark.' },
+      { name: 'Aptos', category: 'Move Execution L1', symbol: 'APT', role: 'Parallelized Block-STM Move smart contract execution blockchain.' },
+      { name: 'Avalanche', category: 'Multi-Subnet Consensus L1', symbol: 'AVAX', role: 'Avalanche consensus protocol powering Primary Network and custom Subnets.' },
+      { name: 'NEAR Protocol', category: 'Sharded L1', symbol: 'NEAR', role: 'Nightshade dynamic state sharding blockchain with account abstraction.' },
+      { name: 'ORE Protocol (on Solana)', category: 'Solana PoW Commodity', symbol: 'ORE', role: 'Fair-launch digital commodity primitive directly mined on Solana runtime.' }
+    ]
+  },
+  {
+    layer: 'L2',
+    title: 'Layer 2: Execution Rollups, SVM Scaling & State Offloading',
+    description: 'Secondary execution networks that bundle transactions to reduce gas fees, increase speed, and settle proofs onto an L1 base layer.',
+    color: 'purple',
+    protocols: [
+      { name: 'Arbitrum One', category: 'Optimistic Rollup (EVM)', symbol: 'ARB', role: 'Dominant Ethereum L2 rollup with Nitro execution stack and multi-billion TVL.' },
+      { name: 'Base (Coinbase)', category: 'OP Stack Rollup', symbol: 'BASE', role: 'Consumer-focused Ethereum L2 built on Optimisms OP Stack with low fees.' },
+      { name: 'Sonic SVM', category: 'Solana SVM Layer 2', symbol: 'SONIC', role: 'First atomic SVM rollup designed specifically for sovereign Web3 gaming on Solana.' },
+      { name: 'SOON SVM', category: 'Solana Stack Rollup', symbol: 'SOON', role: 'Decoupled SVM rollup delivering Solana execution speed to Ethereum and beyond.' },
+      { name: 'MagicBlock Ephemeral Rollups', category: 'Solana Ephemeral State L2', symbol: 'MBLK', role: 'Micro-rollups spun up on demand for millisecond gaming ticks, settled back to Solana.' },
+      { name: 'Eclipse', category: 'SVM on Ethereum L2', symbol: 'ECLIPSE', role: 'First Ethereum L2 powered by Solana Virtual Machine using Celestia DA.' },
+      { name: 'Polygon PoS / zkEVM', category: 'ZK & Sidechain Scaler', symbol: 'POL', role: 'Aggregated blockchain network connecting Ethereum execution via zero-knowledge proofs.' },
+      { name: 'Optimism (OP Mainnet)', category: 'Superchain Rollup', symbol: 'OP', role: 'Foundational OP Stack rollups forming an interconnected Superchain mesh.' }
+    ]
+  },
+  {
+    layer: 'L3',
+    title: 'Layer 3: Application-Specific Chains & Hyper-Specialized Environments',
+    description: 'Custom app-chains built on top of Layer 2s for zero-cost transactions, custom token gas, dedicated throughput, or hyper-focused app economies.',
+    color: 'amber',
+    protocols: [
+      { name: 'Degen Chain', category: 'Arbitrum Orbit L3', symbol: 'DEGEN', role: 'Ultra-low cost L3 built on Base / Arbitrum Orbit for community micro-transactions.' },
+      { name: 'Xai Network', category: 'Arbitrum Orbit Gaming L3', symbol: 'XAI', role: 'Gaming-centric L3 blockchain enabling gasless wallet interactions for video games.' },
+      { name: 'ApeChain', category: 'Arbitrum Orbit L3', symbol: 'APE', role: 'Dedicated entertainment and gaming chain powered by ApeCoin on Arbitrum.' },
+      { name: 'Termina / SVM Subnets', category: 'Solana App-Rollup L3', symbol: 'TERM', role: 'Modular SVM execution network enabling custom rollups on top of Solana roots.' },
+      { name: 'Lens Network', category: 'Social L3 (zkSync Hyperchain)', symbol: 'LENS', role: 'Decentralized social graph processing millions of micro-actions off-L1.' }
+    ]
+  }
+];
 
 function getCategoryIcon(cat) {
   if (!cat) return '🧩';

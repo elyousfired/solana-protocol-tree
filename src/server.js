@@ -48,6 +48,23 @@ export async function handleRequest(req, res) {
       return;
     }
 
+    // API: Stratified Layers Classification (L0, L1, L2, L3, L4 & Global)
+    if (pathname === '/api/solana/layers' && req.method === 'GET') {
+      const forceRefresh = reqUrl.searchParams.get('refresh') === 'true';
+      const data = await getSolanaCompleteEcosystem(forceRefresh);
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300'
+      });
+      res.end(JSON.stringify({
+        success: true,
+        summary: data.summary,
+        layers: data.layers,
+        globalLayers: data.globalLayers
+      }));
+      return;
+    }
+
     // API 2: Specific Root Primitive Tree (e.g. ORE, Raydium, Pump.fun, Sanctum)
     if (pathname === '/api/solana/primitive' && req.method === 'GET') {
       const primitiveId = (reqUrl.searchParams.get('id') || 'ore').toLowerCase();
